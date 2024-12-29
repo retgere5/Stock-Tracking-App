@@ -1,0 +1,15 @@
+2024-12-29 19:49:30 [INFO] Added new product: Ülker Gofret
+2024-12-29 19:49:51 [INFO] Added stock movement: In - 12 units of Ülker Gofret
+2024-12-29 19:50:02 [INFO] Added stock movement: Out - 20 units of Ülker Gofret
+2024-12-29 19:50:07 [INFO] Added stock movement: Out - 12 units of Ülker Gofret
+2024-12-29 19:54:39 [INFO] Added new product: Çikolata
+2024-12-29 19:58:38 [INFO] Added new product: Çikolata
+2024-12-29 20:12:51 [INFO] Deleted product: asdas
+2024-12-29 20:30:17 [INFO] Deleted product: Çikolata
+2024-12-29 20:33:37 [INFO] Added new product: asdas
+2024-12-29 20:34:09 [ERROR] Error adding movement: Requested value 'Stock In' was not found.
+2024-12-29 20:34:14 [ERROR] Error adding movement: Requested value 'Stock In' was not found.
+2024-12-29 20:34:23 [ERROR] Error adding movement: Requested value 'Stock In' was not found.
+2024-12-29 20:36:15 [INFO] Added stock movement: In - 123 units of asdas
+2024-12-29 20:40:01 [INFO] Added new product: Ülker Çikolotalı Gofret
+2024-12-29 20:40:16 [INFO] Added stock movement: In - 100 units of Ülker Çikolotalı Gofret
