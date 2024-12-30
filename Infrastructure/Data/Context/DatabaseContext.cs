@@ -42,6 +42,8 @@ namespace DesktopApp.Infrastructure.Data.Context
                 entity.Property(e => e.Description).HasMaxLength(500);
                 entity.Property(e => e.Price).HasColumnType("decimal(18,2)");
                 entity.Property(e => e.CurrentStock).IsRequired();
+                entity.Property(e => e.CreatedAt).IsRequired();
+                entity.Property(e => e.UpdatedAt);
                 
                 entity.HasMany(p => p.StockMovements)
                     .WithOne(sm => sm.Product)
@@ -65,6 +67,7 @@ namespace DesktopApp.Infrastructure.Data.Context
                 entity.Property(e => e.Notes).HasMaxLength(500);
                 entity.Property(e => e.CreatedBy).IsRequired().HasMaxLength(50);
                 entity.Property(e => e.CreatedAt).IsRequired();
+                entity.Property(e => e.UpdatedAt);
 
                 entity.HasIndex(e => e.CreatedAt);
                 entity.HasIndex(e => e.Type);
@@ -78,7 +81,8 @@ namespace DesktopApp.Infrastructure.Data.Context
                     Name = "Sample Product",
                     Description = "This is a sample product",
                     Price = 29.99m,
-                    CurrentStock = 100
+                    CurrentStock = 100,
+                    CreatedAt = DateTime.Now
                 }
             );
         }

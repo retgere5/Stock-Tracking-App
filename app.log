@@ -13,3 +13,24 @@
 2024-12-29 20:36:15 [INFO] Added stock movement: In - 123 units of asdas
 2024-12-29 20:40:01 [INFO] Added new product: Ülker Çikolotalı Gofret
 2024-12-29 20:40:16 [INFO] Added stock movement: In - 100 units of Ülker Çikolotalı Gofret
+2024-12-30 23:10:05 [ERROR] Error saving product: An error occurred while saving the entity changes. See the inner exception for details.
+2024-12-30 23:10:11 [ERROR] Error saving product: An error occurred while saving the entity changes. See the inner exception for details.
+2024-12-30 23:10:12 [ERROR] Error saving product: An error occurred while saving the entity changes. See the inner exception for details.
+2024-12-30 23:10:18 [ERROR] Error saving product: An error occurred while saving the entity changes. See the inner exception for details.
+2024-12-30 23:10:19 [ERROR] Error saving product: An error occurred while saving the entity changes. See the inner exception for details.
+2024-12-30 23:10:29 [ERROR] Error saving product: An error occurred while saving the entity changes. See the inner exception for details.
+2024-12-30 23:10:32 [ERROR] Error saving product: An error occurred while saving the entity changes. See the inner exception for details.
+2024-12-30 23:10:37 [ERROR] Error saving product: An error occurred while saving the entity changes. See the inner exception for details.
+2024-12-30 23:12:29 [INFO] Added new product: asdasd
+2024-12-30 23:12:44 [INFO] Updated product: asdasd
+2024-12-30 23:14:49 [INFO] Selected product: asdasd
+2024-12-30 23:14:49 [INFO] Selected product: asdasd
+2024-12-30 23:15:05 [INFO] Added new product: 123123
+2024-12-30 23:15:05 [INFO] Selected product: 123123
+2024-12-30 23:15:05 [INFO] Selected product: asdasd
+2024-12-30 23:15:06 [INFO] Selected product: 123123
+2024-12-30 23:15:34 [INFO] Added stock movement: In - 10 units of 123123
+2024-12-30 23:15:34 [INFO] Selected product: 123123
+2024-12-30 23:15:55 [INFO] Added stock movement: Out - 10 units of 123123
+2024-12-30 23:15:55 [INFO] Selected product: 123123
+2024-12-30 23:16:19 [INFO] Selected product: asdasd

@@ -52,8 +52,11 @@ public class ProductService : IBaseService<Product>
         if (product.CurrentStock < 0)
             throw new ArgumentException("Product stock cannot be negative.");
 
+        product.CreatedAt = DateTime.Now;
         await _context.Products.AddAsync(product);
         await _context.SaveChangesAsync();
+
+        Logger.LogInfo($"Added new product: {product.Name}");
         return product;
     }
 
@@ -77,8 +80,11 @@ public class ProductService : IBaseService<Product>
         existingProduct.Name = product.Name;
         existingProduct.Description = product.Description;
         existingProduct.Price = product.Price;
+        existingProduct.UpdatedAt = DateTime.Now;
 
         await _context.SaveChangesAsync();
+
+        Logger.LogInfo($"Updated product: {product.Name}");
         return existingProduct;
     }
 

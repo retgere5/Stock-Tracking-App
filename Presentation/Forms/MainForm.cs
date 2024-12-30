@@ -112,7 +112,8 @@ public class MainForm : Form
         {
             Text = AppStrings.MainForm.AddStockMovement,
             Size = new Size(150, 40),
-            Location = new Point(Constants.UI.PADDING * 2 + 150, 10)
+            Location = new Point(Constants.UI.PADDING * 2 + 150, 10),
+            Enabled = false
         };
         _addStockMovementButton.Click += AddStockMovementButton_Click!;
 
@@ -289,9 +290,10 @@ public class MainForm : Form
         {
             if (_productGrid.SelectedRows.Count == 0)
             {
-                MessageBox.Show(AppStrings.MainForm.SelectProduct, 
-                    AppStrings.MainForm.Warning, 
-                    MessageBoxButtons.OK, 
+                MessageBox.Show(
+                    AppStrings.MainForm.SelectProduct,
+                    AppStrings.MainForm.Warning,
+                    MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
                 return;
             }
@@ -306,17 +308,25 @@ public class MainForm : Form
         catch (Exception ex)
         {
             Logger.LogError($"Error showing stock movement form: {ex.Message}");
-            MessageBox.Show($"Error showing stock movement form: {ex.Message}", 
-                "Error", 
-                MessageBoxButtons.OK, 
+            MessageBox.Show(
+                AppStrings.IsEnglish ? $"Error showing stock movement form: {ex.Message}" : $"Stok hareketi formu gösterilirken hata oluştu: {ex.Message}",
+                AppStrings.MainForm.Error,
+                MessageBoxButtons.OK,
                 MessageBoxIcon.Error);
         }
     }
 
     private void ProductGrid_SelectionChanged(object sender, EventArgs e)
     {
-        _deleteProductButton.Enabled = _productGrid.SelectedRows.Count > 0;
-        _addStockMovementButton.Enabled = _productGrid.SelectedRows.Count > 0;
+        var hasSelection = _productGrid.SelectedRows.Count > 0;
+        _deleteProductButton.Enabled = hasSelection;
+        _addStockMovementButton.Enabled = hasSelection;
+
+        if (hasSelection)
+        {
+            var selectedProduct = (Product)_productGrid.SelectedRows[0].DataBoundItem;
+            Logger.LogInfo($"Selected product: {selectedProduct.Name}");
+        }
     }
 
     private async void DeleteProductButton_Click(object sender, EventArgs e)

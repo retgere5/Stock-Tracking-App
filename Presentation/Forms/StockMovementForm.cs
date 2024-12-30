@@ -56,7 +56,8 @@ public class StockMovementForm : Form
         _headerPanel = new Panel
         {
             Dock = DockStyle.Top,
-            Height = 60
+            Height = 60,
+            BackColor = ThemeColors.Current.PrimaryColor
         };
 
         // Create title label
@@ -64,10 +65,38 @@ public class StockMovementForm : Form
         {
             Text = string.Format(AppStrings.StockMovementForm.Title, _product.Name),
             Font = new Font("Segoe UI", 16, FontStyle.Bold),
+            ForeColor = Color.White,
             AutoSize = true,
             Location = new Point(Constants.UI.PADDING, 15)
         };
         _headerPanel.Controls.Add(_titleLabel);
+
+        // Create product info panel
+        var productInfoPanel = new Panel
+        {
+            Dock = DockStyle.Top,
+            Height = 80,
+            Padding = new Padding(Constants.UI.PADDING)
+        };
+
+        // Add product info labels
+        var productNameLabel = new Label
+        {
+            Text = $"{AppStrings.ProductForm.ProductName} {_product.Name}",
+            Font = new Font("Segoe UI", 10F, FontStyle.Bold),
+            AutoSize = true,
+            Location = new Point(Constants.UI.PADDING, 10)
+        };
+
+        var productStockLabel = new Label
+        {
+            Text = $"{AppStrings.ProductForm.CurrentStock} {_product.CurrentStock}",
+            Font = new Font("Segoe UI", 10F),
+            AutoSize = true,
+            Location = new Point(Constants.UI.PADDING, 35)
+        };
+
+        productInfoPanel.Controls.AddRange(new Control[] { productNameLabel, productStockLabel });
 
         // Create input panel
         var inputPanel = new Panel
@@ -95,7 +124,8 @@ public class StockMovementForm : Form
             Text = AppStrings.StockMovementForm.AddMovement,
             Size = new Size(120, 40),
             Anchor = AnchorStyles.Right,
-            Location = new Point(buttonPanel.ClientSize.Width - 260, 10)
+            Location = new Point(buttonPanel.ClientSize.Width - 260, 10),
+            BackColor = ThemeColors.Current.AccentColor
         };
         _addButton.Click += AddButton_Click!;
 
@@ -104,16 +134,12 @@ public class StockMovementForm : Form
             Text = AppStrings.StockMovementForm.Close,
             Size = new Size(120, 40),
             Anchor = AnchorStyles.Right,
-            Location = new Point(buttonPanel.ClientSize.Width - 140, 10)
+            Location = new Point(buttonPanel.ClientSize.Width - 140, 10),
+            BackColor = ThemeColors.Current.SecondaryColor
         };
         _closeButton.Click += (s, e) => Close();
 
         buttonPanel.Controls.AddRange(new Control[] { _addButton, _closeButton });
-        buttonPanel.Resize += (s, e) =>
-        {
-            _addButton.Location = new Point(buttonPanel.ClientSize.Width - 260, 10);
-            _closeButton.Location = new Point(buttonPanel.ClientSize.Width - 140, 10);
-        };
 
         // Create and style movement grid
         _movementGrid = new DataGridView
@@ -128,60 +154,12 @@ public class StockMovementForm : Form
             BorderStyle = BorderStyle.None,
             RowHeadersVisible = false,
             EnableHeadersVisualStyles = false,
-            AllowUserToResizeRows = false
+            AllowUserToResizeRows = false,
+            BackgroundColor = ThemeColors.Current.SurfaceColor
         };
 
         // Configure grid columns
-        _movementGrid.AutoGenerateColumns = false;
-        _movementGrid.Columns.Add(new DataGridViewTextBoxColumn
-        {
-            DataPropertyName = "Type",
-            HeaderText = AppStrings.StockMovementForm.Grid.MovementType,
-            Name = "Type",
-            MinimumWidth = 120
-        });
-        _movementGrid.Columns.Add(new DataGridViewTextBoxColumn
-        {
-            DataPropertyName = "Quantity",
-            HeaderText = AppStrings.StockMovementForm.Grid.Quantity,
-            Name = "Quantity",
-            MinimumWidth = 80,
-            DefaultCellStyle = new DataGridViewCellStyle
-            {
-                Alignment = DataGridViewContentAlignment.MiddleCenter
-            }
-        });
-        _movementGrid.Columns.Add(new DataGridViewTextBoxColumn
-        {
-            DataPropertyName = "Reference",
-            HeaderText = AppStrings.StockMovementForm.Grid.Reference,
-            Name = "Reference",
-            MinimumWidth = 100
-        });
-        _movementGrid.Columns.Add(new DataGridViewTextBoxColumn
-        {
-            DataPropertyName = "Notes",
-            HeaderText = AppStrings.StockMovementForm.Grid.Notes,
-            Name = "Notes"
-        });
-        _movementGrid.Columns.Add(new DataGridViewTextBoxColumn
-        {
-            DataPropertyName = "CreatedBy",
-            HeaderText = AppStrings.StockMovementForm.Grid.CreatedBy,
-            Name = "CreatedBy",
-            MinimumWidth = 100
-        });
-        _movementGrid.Columns.Add(new DataGridViewTextBoxColumn
-        {
-            DataPropertyName = "CreatedAt",
-            HeaderText = AppStrings.StockMovementForm.Grid.CreatedAt,
-            Name = "CreatedAt",
-            MinimumWidth = 150,
-            DefaultCellStyle = new DataGridViewCellStyle
-            {
-                Format = "g"
-            }
-        });
+        ConfigureMovementGrid();
 
         // Create main container panel
         var mainContainer = new Panel
@@ -196,10 +174,12 @@ public class StockMovementForm : Form
             buttonPanel,
             mainContainer,
             inputPanel,
+            productInfoPanel,
             _headerPanel
         });
 
         ApplyTheme();
+        LoadMovements();
     }
 
     private void ApplyTheme()
@@ -281,14 +261,32 @@ public class StockMovementForm : Form
             Location = new Point(130, y),
             Size = new Size(200, 25),
             Font = new Font("Segoe UI", 10F),
-            DropDownStyle = ComboBoxStyle.DropDownList
+            DropDownStyle = ComboBoxStyle.DropDownList,
+            BackColor = ThemeColors.Current.BackgroundColor,
+            ForeColor = ThemeColors.Current.TextColor
         };
-        _typeBox.Items.AddRange(new[] { 
-            AppStrings.StockMovementForm.Types.In,
-            AppStrings.StockMovementForm.Types.Out,
-            AppStrings.StockMovementForm.Types.Adjustment
-        });
+
+        // Hareket tiplerini enum değerlerinden alıyoruz
+        _typeBox.Items.Add(MovementType.In);
+        _typeBox.Items.Add(MovementType.Out);
+        _typeBox.Items.Add(MovementType.Adjustment);
         _typeBox.SelectedIndex = 0;
+
+        // ComboBox için özel format
+        _typeBox.Format += (s, e) =>
+        {
+            if (e.DesiredType != typeof(string)) return;
+            if (e.Value is MovementType type)
+            {
+                e.Value = type switch
+                {
+                    MovementType.In => AppStrings.StockMovementForm.Types.In,
+                    MovementType.Out => AppStrings.StockMovementForm.Types.Out,
+                    MovementType.Adjustment => AppStrings.StockMovementForm.Types.Adjustment,
+                    _ => type.ToString()
+                };
+            }
+        };
 
         container.Controls.AddRange(new Control[] { typeLabel, _typeBox });
         y += 40;
@@ -407,21 +405,10 @@ public class StockMovementForm : Form
 
         try
         {
-            var selectedType = _typeBox.SelectedItem?.ToString();
-            if (string.IsNullOrEmpty(selectedType))
-            {
-                MessageBox.Show(
-                    AppStrings.IsEnglish ? "Please select a movement type." : "Lütfen bir hareket tipi seçin.",
-                    AppStrings.ProductForm.ValidationError,
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
-                return;
-            }
-
             var movement = new StockMovement
             {
                 ProductId = _product.Id,
-                Type = GetMovementTypeFromDisplay(selectedType),
+                Type = (MovementType)_typeBox.SelectedItem,
                 Quantity = int.Parse(_quantityBox.Text),
                 Reference = _referenceBox.Text.Trim(),
                 Notes = _notesBox.Text.Trim(),
@@ -437,9 +424,9 @@ public class StockMovementForm : Form
         {
             Logger.LogError($"Error adding movement: {ex.Message}");
             MessageBox.Show(
-                AppStrings.IsEnglish ? $"Error adding stock movement: {ex.Message}" : $"Stok hareketi eklenirken hata oluştu: {ex.Message}", 
+                AppStrings.IsEnglish ? $"Error adding stock movement: {ex.Message}" : $"Stok hareketi eklenirken hata oluştu: {ex.Message}",
                 AppStrings.MainForm.Error,
-                MessageBoxButtons.OK, 
+                MessageBoxButtons.OK,
                 MessageBoxIcon.Error);
         }
     }
@@ -463,6 +450,60 @@ public class StockMovementForm : Form
         }
 
         return true;
+    }
+
+    private void ConfigureMovementGrid()
+    {
+        _movementGrid.AutoGenerateColumns = false;
+        _movementGrid.Columns.Add(new DataGridViewTextBoxColumn
+        {
+            DataPropertyName = "Type",
+            HeaderText = AppStrings.StockMovementForm.Grid.MovementType,
+            Name = "Type",
+            MinimumWidth = 120
+        });
+        _movementGrid.Columns.Add(new DataGridViewTextBoxColumn
+        {
+            DataPropertyName = "Quantity",
+            HeaderText = AppStrings.StockMovementForm.Grid.Quantity,
+            Name = "Quantity",
+            MinimumWidth = 80,
+            DefaultCellStyle = new DataGridViewCellStyle
+            {
+                Alignment = DataGridViewContentAlignment.MiddleCenter
+            }
+        });
+        _movementGrid.Columns.Add(new DataGridViewTextBoxColumn
+        {
+            DataPropertyName = "Reference",
+            HeaderText = AppStrings.StockMovementForm.Grid.Reference,
+            Name = "Reference",
+            MinimumWidth = 100
+        });
+        _movementGrid.Columns.Add(new DataGridViewTextBoxColumn
+        {
+            DataPropertyName = "Notes",
+            HeaderText = AppStrings.StockMovementForm.Grid.Notes,
+            Name = "Notes"
+        });
+        _movementGrid.Columns.Add(new DataGridViewTextBoxColumn
+        {
+            DataPropertyName = "CreatedBy",
+            HeaderText = AppStrings.StockMovementForm.Grid.CreatedBy,
+            Name = "CreatedBy",
+            MinimumWidth = 100
+        });
+        _movementGrid.Columns.Add(new DataGridViewTextBoxColumn
+        {
+            DataPropertyName = "CreatedAt",
+            HeaderText = AppStrings.StockMovementForm.Grid.CreatedAt,
+            Name = "CreatedAt",
+            MinimumWidth = 150,
+            DefaultCellStyle = new DataGridViewCellStyle
+            {
+                Format = "g"
+            }
+        });
     }
 
     protected override void Dispose(bool disposing)
