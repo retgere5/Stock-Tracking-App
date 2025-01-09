@@ -408,7 +408,7 @@ public class StockMovementForm : Form
             var movement = new StockMovement
             {
                 ProductId = _product.Id,
-                Type = (MovementType)_typeBox.SelectedItem,
+                Type = _typeBox.SelectedItem != null ? (MovementType)_typeBox.SelectedItem : default,
                 Quantity = int.Parse(_quantityBox.Text),
                 Reference = _referenceBox.Text.Trim(),
                 Notes = _notesBox.Text.Trim(),

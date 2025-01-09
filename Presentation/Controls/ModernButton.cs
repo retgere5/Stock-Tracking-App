@@ -136,6 +136,9 @@ public class ModernButton : Button
     protected override void OnHandleCreated(EventArgs e)
     {
         base.OnHandleCreated(e);
-        Parent.BackColorChanged += (s, ev) => Invalidate();
+        if (Parent != null)
+        {
+            Parent.BackColorChanged += (s, ev) => Invalidate();
+        }
     }
 } 
